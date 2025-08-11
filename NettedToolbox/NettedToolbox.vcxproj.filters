@@ -27,6 +27,9 @@
     <ClInclude Include="NettedToolbox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Functions.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NettedToolbox.cpp">

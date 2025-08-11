@@ -4,15 +4,23 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include "Functions.hpp"
+
 
 using namespace std;
+
+
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+	static HBRUSH backgroundColour;
+	DWORD colour = NULL;
 
 	switch (msg) {
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
 		break;
 	case WM_DESTROY:
+		DeleteObject(backgroundColour);
 		PostQuitMessage(0);
 		break;
 
@@ -31,28 +39,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		}
 		break;
+	case WM_CREATE: {
+		backgroundColour = GetAccentBrush(hwnd);
+	
+
+		return 0;
+
+	}
 	case WM_PAINT: {
+
 		PAINTSTRUCT ps;
 		HDC hdc = BeginPaint(hwnd, &ps);
 
-
-		HKEY hkey;
-
-		
-	
-		
-		COLORREF color =0x00F10FFFF ;
-
-
-
-		HBRUSH hbrush = CreateSolidBrush(0x00FFFFFF);
 		RECT rect;
-
-
 		GetClientRect(hwnd, &rect);
-		FillRect(hdc, &rect, hbrush);
+		FillRect(hdc, &rect, backgroundColour);
 
-		DeleteObject(hbrush);
 		EndPaint(hwnd, &ps);
 	}
 		break;
@@ -63,7 +65,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_  int nCmdShow) {
 
 
 	WNDCLASSEX windowClass = { 0 };
@@ -73,15 +75,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	windowClass.lpszClassName = L"NettedToolbox";
 
 	if (!RegisterClassEx(&windowClass)) {
-		MessageBox(NULL, L"Window Registration Failed!", L"Error", MB_ICONEXCLAMATION | MB_OK);
+		MessageBox(nullptr, L"Window Registration Failed!", L"Error", MB_ICONEXCLAMATION | MB_OK);
 		return 0;
 	}
 
 	RECT desktopRect;
 	if (!GetWindowRect(GetDesktopWindow(), &desktopRect)) { return FALSE; }
+
+
+
 	//Sets the size of the window
-	int windowWidth = 400;
-	int windowHeight = 650;
+	int windowWidth = GetSystemMetrics(SM_CXSCREEN) * 0.2;
+	int windowHeight = GetSystemMetrics(SM_CYSCREEN) * 0.6;
 
 	//Sets the location of the window
 	int posX = desktopRect.right - windowWidth;
@@ -90,10 +95,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Creates the instance of the window using above features
 	HWND hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, L"NettedToolbox", L"Netted Toolbox", 
 		WS_POPUP | WS_BORDER  , posX, posY, windowWidth- 50, windowHeight - 100,
-		NULL, NULL, hInstance, NULL);
+		nullptr, nullptr, hInstance, nullptr);
 
-	if (hwnd == NULL) {
-		MessageBox(NULL, L"Window Creation Failed!", L"Error", MB_ICONEXCLAMATION | MB_OK);
+	if (hwnd == nullptr) {
+		MessageBox(nullptr, L"Window Creation Failed!", L"Error", MB_ICONEXCLAMATION | MB_OK);
 		return 0;
 	}
 
@@ -101,7 +106,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	iconData.cbSize = sizeof(iconData);
 	iconData.hWnd = hwnd;
 	iconData.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
-	iconData.hIcon = (HICON)LoadImage(NULL, L"NettedIco.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_SHARED);
+	iconData.hIcon = (HICON)LoadImage(nullptr, L"NettedIco.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_SHARED);
 	iconData.uCallbackMessage = WM_APP + 1;
 
 	wcscpy_s(iconData.szTip, L"Netted Toolbox");
@@ -109,7 +114,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	Shell_NotifyIconW(NIM_ADD, &iconData);
 
 	MSG msg;
-	while (GetMessage(&msg, NULL, 0, 0))
+	while (GetMessage(&msg, nullptr, 0, 0))
 	{
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
