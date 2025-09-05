@@ -1,0 +1,9 @@
+namespace NettedToolbox
+{
+    [default_interface]
+    runtimeclass elements : Windows.UI.Xaml.Controls.Page
+    {
+        elements();
+        Int32 MyProperty;
+    }
+}

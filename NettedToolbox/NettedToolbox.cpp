@@ -5,7 +5,7 @@
 #include <cctype>
 #include <string>
 #include "Functions.hpp"
-
+#include "elements.hpp"
 
 using namespace std;
 
@@ -21,6 +21,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		break;
 	case WM_DESTROY:
 		DeleteObject(backgroundColour);
+		
 		PostQuitMessage(0);
 		break;
 
@@ -40,20 +41,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		}
 		break;
 	case WM_CREATE: {
+		// Sets the background colour of my application
 		backgroundColour = GetAccentBrush(hwnd);
 	
-
 		return 0;
 
 	}
 	case WM_PAINT: {
 
 		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hwnd, &ps);
-
 		RECT rect;
 		GetClientRect(hwnd, &rect);
+
+		HDC hdc = BeginPaint(hwnd, &ps);
+		
+		// Fills the background colour of my application with the system colour
 		FillRect(hdc, &rect, backgroundColour);
+
+		//Adds text to the top of my panel
+		header(hdc, rect, backgroundColour);
+
 
 		EndPaint(hwnd, &ps);
 	}
