@@ -7,7 +7,7 @@
 #include "Functions.hpp"
 #include "elements.hpp"
 
-using namespace std;
+
 
 
 
@@ -43,7 +43,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	case WM_CREATE: {
 		// Sets the background colour of my application
 		backgroundColour = GetAccentBrush(hwnd);
-	
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)((LPCREATESTRUCT)lParam)->hInstance);
+
 		return 0;
 
 	}
@@ -60,6 +61,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		//Adds text to the top of my panel
 		header(hdc, rect, backgroundColour);
+
+		HINSTANCE hInst = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+		pubIpDisplay(hdc, rect, backgroundColour, hwnd, hInst);
 
 
 		EndPaint(hwnd, &ps);

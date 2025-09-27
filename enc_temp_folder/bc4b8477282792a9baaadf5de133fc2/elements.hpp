@@ -63,7 +63,11 @@ static void pubIpDisplay(HDC hdc, RECT rect, HBRUSH backgroundColour, HWND hwnd,
 	//Outputs the Addresses
 	TextOut(hdc, horLocPercent(rect, 0.5), vertLocPercent(rect2, 0.65), L"Public Addresses", lstrlen(L"Public Addresses"));
 	
-
+	HWND showIP = CreateWindow(
+		L"BUTTON", L"Show IP",
+		WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+		horLocPercent(rect, 0.5), vertLocPercent(rect2, 1.4), 80, 30,
+		hwnd, (HMENU)1001, hInstance, NULL);
 	
 
 	SetTextAlign(hdc, TA_LEFT | TA_BASELINE);
