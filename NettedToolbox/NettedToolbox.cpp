@@ -4,25 +4,19 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
-#include "Functions.hpp"
+#include "functions.hpp"
 #include "elements.hpp"
-
-
-
+#include "network.hpp"
+#include "styling.hpp"
 
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-	static HBRUSH backgroundColour;
-	DWORD colour = NULL;
+	static IPInfo ipAddresses;
+	static Styling style;
 
 	switch (msg) {
 	case WM_CLOSE:
 		DestroyWindow(hwnd);
-		break;
-	case WM_DESTROY:
-		DeleteObject(backgroundColour);
-		
-		PostQuitMessage(0);
 		break;
 
 	case WM_APP + 1:
@@ -41,10 +35,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		}
 		break;
 	case WM_CREATE: {
-		// Sets the background colour of my application
-		backgroundColour = GetAccentBrush(hwnd);
+		// Sets styling settings.
+		style.bgColour = getBackgroundColour(hwnd);
+		style.secBgColour = backgroundAdjust(style.bgColour);
+		style.fontHeader = createHeaderFont(style);
+		style.fontNormal = createNormalFont(style);
+		style.fontColour = contrastTheme(style.bgColour);
+
+
 		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)((LPCREATESTRUCT)lParam)->hInstance);
 
+		//Gets and stores the public IP addresses for display
+		ipAddresses.ipv4 = fetchPublicIPV4();
+		ipAddresses.ipv6 = fetchPublicIPV6();
 		return 0;
 
 	}
@@ -55,18 +58,28 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		GetClientRect(hwnd, &rect);
 
 		HDC hdc = BeginPaint(hwnd, &ps);
-		
+
 		// Fills the background colour of my application with the system colour
-		FillRect(hdc, &rect, backgroundColour);
+		FillRect(hdc, &rect, style.bgColour);
 
 		//Adds text to the top of my panel
-		header(hdc, rect, backgroundColour);
+		header(hdc, rect, style);
 
 		HINSTANCE hInst = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-		pubIpDisplay(hdc, rect, backgroundColour, hwnd, hInst);
+		pubIpDisplay(hdc, rect, style, hwnd, hInst, ipAddresses);
 
 
 		EndPaint(hwnd, &ps);
+	}
+				 break;
+
+	case WM_DESTROY:{
+		DeleteObject(style.bgColour);
+		DeleteObject(style.secBgColour);
+		DeleteObject(style.fontHeader);
+		DeleteObject(style.fontNormal);
+
+		PostQuitMessage(0);
 	}
 		break;
 	default:
@@ -96,8 +109,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 
 	//Sets the size of the window
-	int windowWidth = GetSystemMetrics(SM_CXSCREEN) * 0.2;
-	int windowHeight = GetSystemMetrics(SM_CYSCREEN) * 0.6;
+	int windowWidth = std::trunc(GetSystemMetrics(SM_CXSCREEN) * 0.2);
+	int windowHeight = std::trunc(GetSystemMetrics(SM_CYSCREEN) * 0.6);
 
 	//Sets the location of the window
 	int posX = desktopRect.right - windowWidth;

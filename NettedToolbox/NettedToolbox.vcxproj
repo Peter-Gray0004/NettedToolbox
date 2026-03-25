@@ -108,6 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,9 +134,11 @@
   <ItemGroup>
     <ClInclude Include="elements.hpp" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Functions.hpp" />
+    <ClInclude Include="functions.hpp" />
     <ClInclude Include="NettedToolbox.h" />
+    <ClInclude Include="network.hpp" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="styling.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,3 @@
-// functions.hpp
 #pragma once
 #include <Windows.h>
 #include <dwmapi.h>
@@ -6,7 +5,10 @@
 #include <curl/curl.h>
 
 
-HBRUSH GetAccentBrush(HWND hwnd) {
+
+
+
+HBRUSH getBackgroundColour(HWND hwnd) {
 	DWORD colour;
 	//Required for the theme var that gets colour to pass the bool - doesnt accept a direct passing.
 	BOOL isOpaque = FALSE;
@@ -27,28 +29,30 @@ HBRUSH GetAccentBrush(HWND hwnd) {
 }
 
 
-std::tuple<int, int, int> contrastTheme(HBRUSH backgroundColour) {
+COLORREF contrastTheme(HBRUSH backgroundColour) {
 
 	LOGBRUSH lb = { 0 };
 	GetObject(backgroundColour, sizeof(lb), &lb);
 	COLORREF  colour = lb.lbColor;
 
 	if (colour > 127.5) {
-		return { 0, 0, 0 };
+
+		return RGB(0, 0, 0);
 	}
 	else
 	{
-		return { 255, 255, 255 };
+		
+		return RGB(255, 255, 255);
 	}
 }
 
 int horLocPercent(RECT rect, double percent) {
-	int center = (rect.right - rect.left) * percent;
+	int center = std::trunc((rect.right - rect.left) * percent);
 	
 	return center;
 }
 int vertLocPercent(RECT rect, double percent) {
-	int center = (rect.bottom - rect.top) * percent;
+	int center = std::trunc((rect.bottom - rect.top) * percent);
 
 	return center;
 }
@@ -59,55 +63,6 @@ size_t WriteCallback(char* contents, size_t size, size_t nmemb, void* userp)
 	return size * nmemb;
 }
 
-  std::string fetchPublicIPV4()
-{
-	CURL* curl = curl_easy_init();
-	if (curl) {
-		std::string readBuffer;
-
-		//Gets IPV4 addr
-		curl_easy_setopt(curl, CURLOPT_URL, "https://api.ipify.org");
-		curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-		curl_easy_perform(curl);
-
-		std::string res = "IPV4: " + readBuffer;
-		curl_easy_cleanup(curl);
-		return res;
-	}
-	
-	else {
-		return "IPV4: UNAVAILABLE";
-	}
-	
-	 
-}
- 
-  std::string fetchPublicIPV6()
-  {
-	  CURL* curl = curl_easy_init();
-	  if (curl) {
-		  std::string readBuffer;
-
-		  //Gets IPV6 addr 
-		  curl_easy_setopt(curl, CURLOPT_URL, "https://api64.ipify.org");
-		  curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
-		  curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-		  curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-		  curl_easy_perform(curl);
-
-		  std::string res = "IPV6: " + readBuffer;
-		  curl_easy_cleanup(curl);
-		  return res;
-	  }
-
-	  else {
-		  return "IPV6: UNAVAILABLE";
-	  }
-
-
-  }
 
   HBRUSH  backgroundAdjust(HBRUSH backgroundColour) {
 	  LOGBRUSH lb = { };
