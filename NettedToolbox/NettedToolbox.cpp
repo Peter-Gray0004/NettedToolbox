@@ -4,11 +4,13 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include "resource.h"
 #include "functions.hpp"
 #include "elements.hpp"
 #include "network.hpp"
 #include "styling.hpp"
 
+HINSTANCE g_hInstance = nullptr;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	static IPInfo ipAddresses;
@@ -42,12 +44,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		style.fontNormal = createNormalFont(style);
 		style.fontColour = contrastTheme(style.bgColour);
 
+		createIcon(hwnd, g_hInstance);
 
 		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)((LPCREATESTRUCT)lParam)->hInstance);
 
 		//Gets and stores the public IP addresses for display
 		ipAddresses.ipv4 = fetchPublicIPV4();
 		ipAddresses.ipv6 = fetchPublicIPV6();
+
+
+
 		return 0;
 
 	}
@@ -71,7 +77,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		EndPaint(hwnd, &ps);
 	}
-				 break;
+	break;
 
 	case WM_DESTROY:{
 		DeleteObject(style.bgColour);
@@ -90,12 +96,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_  int nCmdShow) {
-
+	g_hInstance = hInstance;
 
 	WNDCLASSEX windowClass = { 0 };
 	windowClass.cbSize = sizeof(WNDCLASSEX);
 	windowClass.lpfnWndProc = WndProc;
-	windowClass.hInstance = hInstance;
+	windowClass.hInstance = g_hInstance;
 	windowClass.lpszClassName = L"NettedToolbox";
 
 	if (!RegisterClassEx(&windowClass)) {
@@ -119,23 +125,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	//Creates the instance of the window using above features
 	HWND hwnd = CreateWindowEx(WS_EX_TOOLWINDOW, L"NettedToolbox", L"Netted Toolbox", 
 		WS_POPUP | WS_BORDER  , posX, posY, windowWidth- 50, windowHeight - 100,
-		nullptr, nullptr, hInstance, nullptr);
+		nullptr, nullptr, g_hInstance, nullptr);
 
 	if (hwnd == nullptr) {
 		MessageBox(nullptr, L"Window Creation Failed!", L"Error", MB_ICONEXCLAMATION | MB_OK);
 		return 0;
 	}
 
-	NOTIFYICONDATA iconData;
-	iconData.cbSize = sizeof(iconData);
-	iconData.hWnd = hwnd;
-	iconData.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
-	iconData.hIcon = (HICON)LoadImage(nullptr, L"NettedIco.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_SHARED);
-	iconData.uCallbackMessage = WM_APP + 1;
 
-	wcscpy_s(iconData.szTip, L"Netted Toolbox");
 	
-	Shell_NotifyIconW(NIM_ADD, &iconData);
+
 
 	MSG msg;
 	while (GetMessage(&msg, nullptr, 0, 0))
@@ -144,7 +143,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		DispatchMessage(&msg);
 	}
 
-	Shell_NotifyIconW(NIM_DELETE, &iconData);
+
 	DestroyWindow(hwnd);
 
 	return(0);

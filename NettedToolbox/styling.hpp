@@ -31,3 +31,18 @@ static HFONT createNormalFont(Styling style) {
 
 	return hFont;
 }
+
+static void createIcon( HWND hwnd, HINSTANCE hInstance){
+	NOTIFYICONDATA iconData = {};
+	iconData.cbSize = sizeof(iconData);
+	iconData.hWnd = hwnd;
+	iconData.uID = 1;
+	iconData.uFlags = NIF_ICON | NIF_TIP | NIF_MESSAGE;
+	iconData.uCallbackMessage = WM_APP + 1;
+	iconData.uFlags |= NIF_ICON;
+	iconData.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_NETTEDTOOLBOX));
+
+	Shell_NotifyIconW(NIM_ADD, &iconData);
+	wcscpy_s(iconData.szTip, L"Netted Toolbox");
+
+}

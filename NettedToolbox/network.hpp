@@ -46,16 +46,22 @@ std::wstring fetchPublicIPV6()
 
 		//Gets IPV6 addr 
 		curl_easy_setopt(curl, CURLOPT_URL, "https://api64.ipify.org");
+		curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V6);
+		curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 5L);   // 5 seconds
 		curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-		curl_easy_perform(curl);
+		CURLcode res 	= curl_easy_perform(curl);
+
+
+		if (res != CURLE_OK || readBuffer.empty()){
+			return L"IPV6: UNAVAILABLE";
+		}
 
 		std::wstring wide = std::wstring(readBuffer.begin(), readBuffer.end());
-		std::wstring res = L"IPV6: " + wide;
-
 		curl_easy_cleanup(curl);
-		return res;
+
+		return L"IPV6: " + wide;;
 	}
 
 	else {
