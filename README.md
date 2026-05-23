@@ -16,5 +16,3 @@ Libcurl
 * Seperate network calls to a different thread
 * Implement the private IP section
 * Implement the network debugging buttons
-# Notes
-With this project, I've bit off slightly more than I can chew. As such development is slow but making progress. It's not to the point where I'm overwhelmed and as such, this is a great introductory project to C++
