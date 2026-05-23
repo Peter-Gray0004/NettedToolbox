@@ -61,7 +61,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 		PAINTSTRUCT ps;
 		RECT rect;
-		HINSTANCE hInst = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 		GetClientRect(hwnd, &rect);
 
 		HDC hdc = BeginPaint(hwnd, &ps);
@@ -72,7 +71,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		//Adds text to the top of my panel
 		header(hdc, rect, style);
 
-		
+		HINSTANCE hInst = (HINSTANCE)GetWindowLongPtr(hwnd, GWLP_USERDATA);
 		pubIpDisplay(hdc, rect, style, hwnd, hInst, ipAddresses);
 
 

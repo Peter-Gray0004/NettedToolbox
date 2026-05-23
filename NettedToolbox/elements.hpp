@@ -1,5 +1,6 @@
 #include "styling.hpp"
 #include "network.hpp"
+
 static void header(HDC hdc, RECT rect, Styling style) {
 	
 	HFONT oldFont = (HFONT)SelectObject(hdc, style.fontHeader);
@@ -59,4 +60,8 @@ static void pubIpDisplay(HDC hdc, RECT rect, Styling style, HWND hwnd, HINSTANCE
 	
 	SelectObject(hdc, hOldFont);
 	
+}
+
+static void  privIpDisplay() {
+
 }

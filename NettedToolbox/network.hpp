@@ -26,19 +26,20 @@ std::wstring fetchPublicIPV4()
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 		CURLcode res = curl_easy_perform(curl);
 
-
-		if (res != CURLE_OK || readBuffer.empty()) {
-			return L"IPV4: UNAVAILABLE";
-		}
-
+		//Stores then cleans the curl request
 		std::wstring wide = std::wstring(readBuffer.begin(), readBuffer.end());
 		curl_easy_cleanup(curl);
 
-		return L"IPV4: " + wide;;
+		if (res != CURLE_OK || readBuffer.empty()) {
+
+			return L"IPV4: UNAVAILABLE";
+		}
+
+		return L"IPV4: " + wide;
 	}
 
 	else {
-		return L"IPV6: UNAVAILABLE";
+		return L"IPV4: UNAVAILABLE";
 	}
 
 }
@@ -58,13 +59,13 @@ std::wstring fetchPublicIPV6()
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
 		CURLcode res 	= curl_easy_perform(curl);
 
+		//Stores then cleans the curl request
+		std::wstring wide = std::wstring(readBuffer.begin(), readBuffer.end());
+		curl_easy_cleanup(curl);
 
 		if (res != CURLE_OK || readBuffer.empty()){
 			return L"IPV6: UNAVAILABLE";
 		}
-
-		std::wstring wide = std::wstring(readBuffer.begin(), readBuffer.end());
-		curl_easy_cleanup(curl);
 
 		return L"IPV6: " + wide;;
 	}

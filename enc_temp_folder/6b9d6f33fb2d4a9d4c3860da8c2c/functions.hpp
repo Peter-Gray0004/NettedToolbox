@@ -34,13 +34,8 @@ COLORREF contrastTheme(HBRUSH backgroundColour) {
 	LOGBRUSH lb = { 0 };
 	GetObject(backgroundColour, sizeof(lb), &lb);
 	COLORREF  colour = lb.lbColor;
-	int r = GetRValue(colour);
-	int g = GetGValue(colour);
-	int B = GetBValue(colour);
 
-	float avgColour = (r + g + B) / 3.0f;
-
-	if (avgColour > 127.5) {
+	if (colour > 127.5) {
 
 		return RGB(0, 0, 0);
 	}

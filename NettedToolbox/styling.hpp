@@ -12,7 +12,7 @@ struct Styling {
 static HFONT createHeaderFont(Styling style) {
 	
 	HFONT hFont = CreateFont(
-		-24, 0, 0, 0, FW_LIGHT, FALSE, FALSE, FALSE,
+		-40, 0, 0, 0, FW_LIGHT, FALSE, FALSE, FALSE,
 		ANSI_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
 		DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
 		TEXT("Segoe UI"));
